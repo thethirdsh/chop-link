@@ -21,15 +21,19 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 5000
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-app.use(cors())
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+  }),
+)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use((req, res, next) => {
   req.context = {
-    prisma
+    prisma,
   }
   next()
 })
