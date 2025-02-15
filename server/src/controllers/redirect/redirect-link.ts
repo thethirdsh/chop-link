@@ -15,9 +15,18 @@ export const redirectLink = async (
         .status(404)
         .json({ message: 'Link does not exist', data: { link, shortUrl } })
 
-    const { original } = link
+    await prisma.link.update({
+      where: {
+        short: shortUrl,
+      },
+      data: {
+        clicks: {
+          increment: 1,
+        },
+      },
+    })
 
-    return res.redirect(original)
+    return res.redirect(link.original)
   } catch (error) {
     return res.status(500).json({ message: error })
   }
