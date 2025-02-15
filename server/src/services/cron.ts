@@ -4,8 +4,8 @@ import axios from 'axios'
 
 const prisma = new PrismaClient()
 
-cron.schedule('0 * * * *', async () => {
-  // Runs every hour
+cron.schedule('0 0 * * *', async () => {
+  // Runs every 24 hours
   console.log('Checking for broken links...')
 
   const links = await prisma.link.findMany() // Get all links
