@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { PrismaClient } from '@prisma/client'
 import linksRouter from './routes/links'
 import redirectRouter from './routes/redirect'
+import './services/cron'
 
 declare global {
   namespace Express {
