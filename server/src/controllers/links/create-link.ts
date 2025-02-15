@@ -21,7 +21,7 @@ export const createLink = async (req: Request, res: Response): Promise<any> => {
           .status(409)
           .json({ message: 'Link already exists', data: existingLink })
 
-      const uid = new ShortUniqueId({ length: 5 })
+      const uid = new ShortUniqueId({ length: 6 })
       const urlId = uid.randomUUID()
 
       const short = `${urlId}`
