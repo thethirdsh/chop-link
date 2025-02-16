@@ -1,101 +1,144 @@
-import Image from "next/image";
+'use client'
+
+import toast from 'react-hot-toast'
+import { BiSolidCircleThreeQuarter } from 'react-icons/bi'
+import { PiCopy } from 'react-icons/pi'
+import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md'
+import { useState } from 'react'
+import { useTheme } from 'next-themes'
+import axios from 'axios'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [shortUrl, setShortUrl] = useState('')
+  const [url, setUrl] = useState('')
+  const { theme, setTheme } = useTheme()
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark')
+  }
+
+  if (theme === null) return null
+
+  const handleShorten = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateUrl(url)) {
+      toast.error('Invalid URL')
+      return
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/links`,
+        { url }
+      )
+      const data = response.data
+      const short = data.data.short
+      console.log('data: ', data)
+      console.log('short: ', short)
+      setShortUrl(`http://localhost:3000/${short}`)
+    } catch (error) {
+      toast.error('Error shortening URL')
+      console.error(error)
+    }
+
+    toast.success('URL shortened successfully!')
+  }
+
+  const validateUrl = (url: string) => {
+    const regex = new RegExp(
+      /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/
+    )
+    return regex.test(url)
+  }
+
+  const handleCopy = () => {
+    if (shortUrl) {
+      navigator.clipboard.writeText(shortUrl)
+      toast.success('Copied to clipboard')
+    }
+  }
+
+  return (
+    <>
+      <div className="flex flex-col bg-white dark:bg-gray-950 min-h-screen">
+        <div className="flex flex-col">
+          <div className="flex flex-row items-center py-5 px-12">
+            <div className="flex flex-row items-center space-x-6">
+              <BiSolidCircleThreeQuarter className="text-2xl scale-x-[-1] rotate-90 dark:text-white" />
+              <p className="text-xl font-semibold dark:text-white">ChopLink</p>
+            </div>
+            <button
+              onClick={toggleTheme}
+              className="absolute right-14 p-2 rounded-full bg-gray-200 dark:bg-gray-800 transition-all duration-300"
+            >
+              {theme === 'dark' ? (
+                <MdOutlineLightMode className="text-2xl text-white" />
+              ) : (
+                <MdOutlineDarkMode className="text-2xl text-black" />
+              )}
+            </button>
+          </div>
+          <hr className="border-[1px]" />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+
+        <div className="flex flex-col items-center gap-8 py-14">
+          <div className="flex flex-col space-y-4 w-[335px] md:w-[570px]">
+            <p className="text-2xl md:text-4xl font-semibold dark:text-white">
+              Shorten your link
+            </p>
+            <p className="font-light text-[#637587] text-sm md:text-base">
+              Create a shortened URL for easy sharing
+            </p>
+          </div>
+          <div className="flex flex-col space-y-8">
+            <div className="flex flex-col space-y-2">
+              <p className="dark:text-white">Paste your URL here</p>
+              <form
+                className="flex flex-row items-center space-x-6"
+                onSubmit={handleShorten}
+              >
+                <input
+                  className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[215px] md:w-[450px]"
+                  type="text"
+                  onChange={(e) => setUrl(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="flex flex-row justify-center items-center rounded-xl bg-[#1A80E5] w-24 h-[50px]"
+                >
+                  <p className="text-lg text-white">Chop it!</p>
+                </button>
+              </form>
+            </div>
+
+            {shortUrl && (
+              <div className="flex flex-col space-y-6">
+                <p className="text-xl font-semibold dark:text-white">
+                  Your short link
+                </p>
+                <div className="flex flex-col space-y-2">
+                  <p className="text-lg dark:text-white">Shortened URL</p>
+                  <div className="flex flex-row">
+                    <input
+                      className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[335px] md:w-[450px]"
+                      readOnly
+                      type="text"
+                      value={shortUrl}
+                    />
+                    <button
+                      className="relative right-11 text-gray-500 hover:text-gray-800"
+                      onClick={handleCopy}
+                    >
+                      <PiCopy className="text-3xl " />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  )
 }

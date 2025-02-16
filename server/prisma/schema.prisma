@@ -14,8 +14,9 @@ datasource db {
 }
 
 model Link {
-  id        String @id @default(uuid()) @map("_id")
-  original  String @unique
-  short     String @unique
+  id        String   @id @default(uuid()) @map("_id")
+  original  String   @unique
+  short     String   @unique
+  clicks    Int      @default(0)
   createdAt DateTime @default(now())
 }
