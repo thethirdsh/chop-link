@@ -83,11 +83,11 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col items-center gap-8 py-14">
-          <div className="flex flex-col space-y-4 w-[570px]">
-            <p className="text-4xl font-semibold dark:text-white">
+          <div className="flex flex-col space-y-4 w-[335px] md:w-[570px]">
+            <p className="text-2xl md:text-4xl font-semibold dark:text-white">
               Shorten your link
             </p>
-            <p className="font-light text-[#637587]">
+            <p className="font-light text-[#637587] text-sm md:text-base">
               Create a shortened URL for easy sharing
             </p>
           </div>
@@ -99,7 +99,7 @@ export default function Home() {
                 onSubmit={handleShorten}
               >
                 <input
-                  className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[450px]"
+                  className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[215px] md:w-[450px]"
                   type="text"
                   onChange={(e) => setUrl(e.target.value)}
                 />
@@ -121,7 +121,7 @@ export default function Home() {
                   <p className="text-lg dark:text-white">Shortened URL</p>
                   <div className="flex flex-row">
                     <input
-                      className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[450px]"
+                      className="bg-[#F0F2F5] dark:bg-[#293038] text-gray-500 dark:text-[#9EABB8] p-4 rounded-xl w-[335px] md:w-[450px]"
                       readOnly
                       type="text"
                       value={shortUrl}
