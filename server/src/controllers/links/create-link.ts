@@ -18,7 +18,7 @@ export const createLink = async (req: Request, res: Response): Promise<any> => {
 
       if (existingLink)
         return res
-          .status(409)
+          .status(200)
           .json({ message: 'Link already exists', data: existingLink })
 
       const uid = new ShortUniqueId({ length: 6 })
